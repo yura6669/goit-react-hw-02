@@ -1,49 +1,64 @@
 import { Description } from './components/description/Description';
-import { Option } from './components/options/Option';
+import { Options } from './components/options/Option';
 import { Feedback } from './components/feetback/Feedback';
 import { Notification } from './components/notification/Notification';
 import { useState, useEffect } from "react";
 
 function App() {
   //set initial state
+  let reviews = {
+    good: 0,
+    neutral: 0,
+    bad: 0
+  };
   const [goodReview, setGoodsReview] = useState(() => {
-    const savedGoodReview = window.localStorage.getItem('goodReview');
-    if (savedGoodReview !== null) {
+    const storageReviews = window.localStorage.getItem('reviews');
+    if (storageReviews !== null) { 
+      const savedGoodReview = JSON.parse(storageReviews)['good'];
+      if (savedGoodReview !== null) {
       return parseInt(savedGoodReview);
     }
-    return 0;
+    }
+    return reviews.good;
   });
   const [neutralReview, setNeutralReview] = useState(() => {
-    const savedNeutralReview = window.localStorage.getItem('neutralReview');
-    if (savedNeutralReview !== null) {
+    const storageReviews = window.localStorage.getItem('reviews');
+    if (storageReviews !== null) { 
+      const savedNeutralReview = JSON.parse(storageReviews)['neutral'];
+      if (savedNeutralReview !== null) {
       return parseInt(savedNeutralReview);
     }
-    return 0;
+    }
+    return reviews.neutral;
   });
   const [badReview, setBadReview] = useState(() => {
-    const savedBadReview = window.localStorage.getItem('badReview');
-    if (savedBadReview !== null) {
+    const storageReviews = window.localStorage.getItem('reviews');
+    if (storageReviews !== null) { 
+      const savedBadReview = JSON.parse(storageReviews)['bad'];
+      if (savedBadReview !== null) {
       return parseInt(savedBadReview);
     }
-    return 0;
+    }
+
+    return reviews.bad;
   });
 
   //use effect to save state to local storage
   useEffect(() => {
-    window.localStorage.setItem('goodReview', goodReview);
+    window.localStorage.setItem('reviews', JSON.stringify({ good: goodReview, neutral: neutralReview, bad: badReview }));
   }, [goodReview]);
   
   useEffect(() => { 
-    window.localStorage.setItem('neutralReview', neutralReview);
+    window.localStorage.setItem('reviews', JSON.stringify({ good: goodReview, neutral: neutralReview, bad: badReview }));
   }, [neutralReview]);
 
   useEffect(() => { 
-    window.localStorage.setItem('badReview', badReview);
+    window.localStorage.setItem('reviews', JSON.stringify({ good: goodReview, neutral: neutralReview, bad: badReview }));
   }, [badReview]);
 
   const totalFeedback = goodReview + neutralReview + badReview;
 
-  let positiveResult = 100;
+  let positiveResult;
 
   positiveResult = countPositiveResult();
 
@@ -70,17 +85,16 @@ function App() {
   };
 
   function countPositiveResult() {
+    positiveResult = 100;
     if (totalFeedback > 0) {
       positiveResult = Math.round(((goodReview + neutralReview) / totalFeedback) * 100)
       return positiveResult;
-    } else { 
-      return 0;
     }
   }
   return (
     <>
       <Description />
-      <Option totalFeedback={totalFeedback} handleAddGoodReviewClick={() => updateFeedback('good')} handleAddNeutralReviewClick= {() => updateFeedback('neutral')} handleAddBadReviewClick={() => updateFeedback('bad')} handleResetFeedbackClick={() => resetFeedback()}/>
+      <Options totalFeedback={totalFeedback} handleAddGoodReviewClick={() => updateFeedback('good')} handleAddNeutralReviewClick= {() => updateFeedback('neutral')} handleAddBadReviewClick={() => updateFeedback('bad')} handleResetFeedbackClick={() => resetFeedback()}/>
       {totalFeedback === 0 ? <Notification /> : <Feedback good={goodReview} neutral={neutralReview} bad={badReview} positiveResult={ positiveResult} />
       }
     </>

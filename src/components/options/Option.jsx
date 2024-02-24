@@ -1,6 +1,6 @@
 import css from './Option.module.css';
     
-export const Option = ({ totalFeedback, handleAddGoodReviewClick, handleAddNeutralReviewClick, handleAddBadReviewClick, handleResetFeedbackClick }) => { 
+export const Options = ({ totalFeedback, handleAddGoodReviewClick, handleAddNeutralReviewClick, handleAddBadReviewClick, handleResetFeedbackClick }) => { 
     
 
     return (
